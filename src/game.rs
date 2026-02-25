@@ -11,8 +11,12 @@ pub fn draw_game(stdout: &mut io::Stdout, game: &Game) -> io::Result<()> {
         draw_char(stdout, (cell.0.0, cell.0.1), '#')?;
     }
 
-    draw_char(stdout, game.player_position, 'P')?;
-    draw_char(stdout, game.exit_position, 'E')?;
+    if game.player_position == game.exit_position {
+        draw_char(stdout, game.player_position, 'W')?;
+    } else {
+        draw_char(stdout, game.player_position, 'P')?;
+        draw_char(stdout, game.exit_position, 'E')?;
+    }
 
     stdout.flush()?;
     Ok(())
