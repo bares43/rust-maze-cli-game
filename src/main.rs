@@ -10,7 +10,7 @@ use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
 };
 
-use crate::game::move_player;
+use crate::game::{clear_game, move_player};
 
 fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
@@ -28,7 +28,10 @@ fn main() -> io::Result<()> {
     loop {
         if let Event::Key(KeyEvent { code, .. }) = event::read()? {
             match code {
-                KeyCode::Char('q') => break,
+                KeyCode::Char('q') => {
+                    clear_game(&mut stdout)?;
+                    break
+                },
                 KeyCode::Left => move_player(&mut stdout, &mut game, models::MoveDirection::Left)?,
                 KeyCode::Right => move_player(&mut stdout, &mut game, models::MoveDirection::Right)?,
                 KeyCode::Down => move_player(&mut stdout, &mut game, models::MoveDirection::Bottom)?,

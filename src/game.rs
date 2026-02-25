@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use crossterm::{
     QueueableCommand,
     cursor,
-    style::{self, Color, Stylize},
+    style::{self, Color, Stylize}, terminal::{Clear, ClearType},
 };
 
 pub fn draw_game(stdout: &mut io::Stdout, game: &Game) -> io::Result<()> {
@@ -81,4 +81,10 @@ fn clear_player_position(stdout: &mut io::Stdout, position: &(u16, u16)) -> io::
 
 fn can_move(x: u16, y: u16, game: &Game) -> bool {
     !game.map.cells.contains_key(&(x, y))
+}
+
+pub fn clear_game(stdout: &mut io::Stdout) -> io::Result<()> {
+    stdout.queue(Clear(ClearType::All))?;
+
+    Ok(())
 }
