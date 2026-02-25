@@ -23,6 +23,7 @@ impl Map {
 pub struct Game {
     pub map: Map,
     pub player_position: (u16, u16),
+    pub exit_position: (u16, u16),
 }
 
 impl Game {
@@ -30,6 +31,7 @@ impl Game {
         Self {
             map: Map::new(),
             player_position: (0,0),
+            exit_position: (0, 0),
         }
     }
 }

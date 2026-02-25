@@ -8,26 +8,26 @@ use crossterm::{
 
 pub fn draw_game(stdout: &mut io::Stdout, game: &Game) -> io::Result<()> {
     for cell in game.map.cells.iter() {
-            stdout
-                    .queue(cursor::MoveTo(cell.0.0, cell.0.1))?
-                    .queue(style::PrintStyledContent(
-                        style::StyledContent::new(
-                            style::ContentStyle::new().with(Color::White),
-                            "#",
-                        ),
-                    ))?;
+        draw_char(stdout, (cell.0.0, cell.0.1), '#')?;
     }
 
+    draw_char(stdout, game.player_position, 'P')?;
+    draw_char(stdout, game.exit_position, 'E')?;
+
+    stdout.flush()?;
+    Ok(())
+}
+
+fn draw_char(stdout: &mut io::Stdout, position: (u16, u16), char: char) -> io::Result<()> {
     stdout
-        .queue(cursor::MoveTo(game.player_position.0, game.player_position.1))?
+        .queue(cursor::MoveTo(position.0, position.1))?
         .queue(style::PrintStyledContent(
             style::StyledContent::new(
                 style::ContentStyle::new().with(Color::White),
-                "P",
+                char,
             ),
         ))?;
 
-    stdout.flush()?;
     Ok(())
 }
 

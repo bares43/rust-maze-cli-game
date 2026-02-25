@@ -17,6 +17,7 @@ fn main() -> io::Result<()> {
 
     let mut game = Game::new();
     game.player_position = (1, 1);
+    game.exit_position = (99,19);
 
     generate_map(&mut game.map, 100, 20);
 
