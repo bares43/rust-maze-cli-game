@@ -19,3 +19,24 @@ impl Map {
         self.cells.insert((x, y), cell);
     }
 }
+
+pub struct Game {
+    pub map: Map,
+    pub player_position: (u16, u16),
+}
+
+impl Game {
+    pub fn new() -> Self {
+        Self {
+            map: Map::new(),
+            player_position: (0,0),
+        }
+    }
+}
+
+pub enum MoveDirection {
+    Left,
+    Right,
+    Top,
+    Bottom,
+}

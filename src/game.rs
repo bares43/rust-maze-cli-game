@@ -1,4 +1,4 @@
-use crate::models::{Map, CellType};
+use crate::models::{CellType, Game, Map, MoveDirection};
 use std::io::{self, Write};
 use crossterm::{
     QueueableCommand,
@@ -6,17 +6,26 @@ use crossterm::{
     style::{self, Color, Stylize},
 };
 
-pub fn draw_game(stdout: &mut io::Stdout, map: &Map) -> io::Result<()> {
-    for cell in map.cells.iter() {
+pub fn draw_game(stdout: &mut io::Stdout, game: &Game) -> io::Result<()> {
+    for cell in game.map.cells.iter() {
             stdout
                     .queue(cursor::MoveTo(cell.0.0, cell.0.1))?
                     .queue(style::PrintStyledContent(
                         style::StyledContent::new(
                             style::ContentStyle::new().with(Color::White),
-                            "|||",
+                            "#",
                         ),
                     ))?;
     }
+
+    stdout
+        .queue(cursor::MoveTo(game.player_position.0, game.player_position.1))?
+        .queue(style::PrintStyledContent(
+            style::StyledContent::new(
+                style::ContentStyle::new().with(Color::White),
+                "P",
+            ),
+        ))?;
 
     stdout.flush()?;
     Ok(())
@@ -32,4 +41,44 @@ pub fn generate_map(map: &mut Map, grid_size_x: u16, grid_size_y: u16) {
         map.add_cell(0, y, CellType::Wall);
         map.add_cell(grid_size_x, y, CellType::Wall);
     }
+}
+
+pub fn move_player(stdout: &mut io::Stdout, game: &mut Game, direction: MoveDirection) -> io::Result<()> {
+    let mut new_position = game.player_position.clone();
+    
+    match direction {
+        MoveDirection::Left => new_position.0 -= 1,
+        MoveDirection::Right => new_position.0 += 1,
+        MoveDirection::Bottom => new_position.1 += 1,
+        MoveDirection::Top => new_position.1 -= 1,
+    }
+    
+    if !can_move(new_position.0, new_position.1, game) {
+        return Ok(())
+    }
+
+    clear_player_position(stdout, &game.player_position)?;
+
+    game.player_position = new_position;
+
+    draw_game(stdout, game)?;
+
+    Ok(())
+}
+
+fn clear_player_position(stdout: &mut io::Stdout, position: &(u16, u16)) -> io::Result<()> {
+    stdout
+        .queue(cursor::MoveTo(position.0, position.1))?
+        .queue(style::PrintStyledContent(
+            style::StyledContent::new(
+                style::ContentStyle::new().with(Color::White),
+                " ",
+            ),
+        ))?;
+
+    Ok(())
+}
+
+fn can_move(x: u16, y: u16, game: &Game) -> bool {
+    !game.map.cells.contains_key(&(x, y))
 }

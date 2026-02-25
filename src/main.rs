@@ -1,7 +1,7 @@
 mod models;
 mod game;
 
-use models::{Map};
+use models::{Game};
 use game::{draw_game,generate_map};
 use std::{io::{self}};
 use crossterm::{
@@ -10,22 +10,29 @@ use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
 };
 
+use crate::game::move_player;
+
 fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
 
-    let mut game_map = Map::new();
+    let mut game = Game::new();
+    game.player_position = (1, 1);
 
-    generate_map(&mut game_map, 100, 20);
+    generate_map(&mut game.map, 100, 20);
 
     terminal::enable_raw_mode()?;
 
     stdout.execute(terminal::Clear(terminal::ClearType::All))?;
-    draw_game(&mut stdout, &game_map)?;
+    draw_game(&mut stdout, &game)?;
 
     loop {
         if let Event::Key(KeyEvent { code, .. }) = event::read()? {
             match code {
                 KeyCode::Char('q') => break,
+                KeyCode::Left => move_player(&mut stdout, &mut game, models::MoveDirection::Left)?,
+                KeyCode::Right => move_player(&mut stdout, &mut game, models::MoveDirection::Right)?,
+                KeyCode::Down => move_player(&mut stdout, &mut game, models::MoveDirection::Bottom)?,
+                KeyCode::Up => move_player(&mut stdout, &mut game, models::MoveDirection::Top)?,
                 _ => {}
             }
         }
