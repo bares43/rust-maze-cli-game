@@ -10,7 +10,7 @@ pub fn draw_game(stdout: &mut io::Stdout, game: &Game) -> io::Result<()> {
     for ((x, y), cell_type) in game.map.cells.iter() {
 
         match cell_type {
-            CellType::Wall => draw_char(stdout, (*x, *y), '#', Color::White)?,
+            CellType::Wall => draw_char(stdout, (*x, *y), '█', Color::White)?,
             CellType::Empty => draw_char(stdout, (*x, *y), ' ', Color::Black)?,
         }
 
