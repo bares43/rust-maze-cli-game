@@ -17,8 +17,8 @@ fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
 
     let mut game = Game::new();
-    game.size_x = 54;
-    game.size_y = 14;
+    game.size_x = 74;
+    game.size_y = 24;
     game.player_position = (1, 1);
     game.exit_position = (game.size_x - 1, game.size_y - 1);
 
