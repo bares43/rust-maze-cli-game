@@ -1,5 +1,6 @@
 mod models;
 mod game;
+mod generator;
 
 use models::{Game};
 use game::{draw_game,generate_map};
@@ -16,10 +17,12 @@ fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
 
     let mut game = Game::new();
+    game.size_x = 55;
+    game.size_y = 14;
     game.player_position = (1, 1);
-    game.exit_position = (99,19);
+    game.exit_position = (game.size_x - 1, game.size_y - 1);
 
-    generate_map(&mut game.map, 100, 20);
+    generate_map(&mut game);
 
     terminal::enable_raw_mode()?;
 

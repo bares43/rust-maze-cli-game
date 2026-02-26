@@ -1,4 +1,4 @@
-use crate::models::{CellType, Game, Map, MoveDirection};
+use crate::{generator::{init_map, make_paths}, models::{CellType, Game, MoveDirection}};
 use std::io::{self, Write};
 use crossterm::{
     QueueableCommand,
@@ -7,27 +7,32 @@ use crossterm::{
 };
 
 pub fn draw_game(stdout: &mut io::Stdout, game: &Game) -> io::Result<()> {
-    for cell in game.map.cells.iter() {
-        draw_char(stdout, (cell.0.0, cell.0.1), '#')?;
+    for ((x, y), cell_type) in game.map.cells.iter() {
+
+        match cell_type {
+            CellType::Wall => draw_char(stdout, (*x, *y), '#', Color::White)?,
+            CellType::Empty => draw_char(stdout, (*x, *y), ' ', Color::Black)?,
+        }
+
     }
 
     if game.player_position == game.exit_position {
-        draw_char(stdout, game.player_position, 'W')?;
+        draw_char(stdout, game.player_position, 'W', Color::White)?;
     } else {
-        draw_char(stdout, game.player_position, 'P')?;
-        draw_char(stdout, game.exit_position, 'E')?;
+        draw_char(stdout, game.player_position, 'P', Color::Red)?;
+        draw_char(stdout, game.exit_position, 'E', Color::White)?;
     }
 
     stdout.flush()?;
     Ok(())
 }
 
-fn draw_char(stdout: &mut io::Stdout, position: (u16, u16), char: char) -> io::Result<()> {
+fn draw_char(stdout: &mut io::Stdout, position: (u16, u16), char: char, color: Color) -> io::Result<()> {
     stdout
         .queue(cursor::MoveTo(position.0, position.1))?
         .queue(style::PrintStyledContent(
             style::StyledContent::new(
-                style::ContentStyle::new().with(Color::White),
+                style::ContentStyle::new().with(color),
                 char,
             ),
         ))?;
@@ -35,16 +40,9 @@ fn draw_char(stdout: &mut io::Stdout, position: (u16, u16), char: char) -> io::R
     Ok(())
 }
 
-pub fn generate_map(map: &mut Map, grid_size_x: u16, grid_size_y: u16) {
-    for x in 0..=grid_size_x {
-        map.add_cell(x, 0, CellType::Wall);
-        map.add_cell(x, grid_size_y, CellType::Wall);
-    }
-    
-    for y in 1..grid_size_y {
-        map.add_cell(0, y, CellType::Wall);
-        map.add_cell(grid_size_x, y, CellType::Wall);
-    }
+pub fn generate_map(game: &mut Game) {
+    init_map(game);
+    make_paths(game);
 }
 
 pub fn move_player(stdout: &mut io::Stdout, game: &mut Game, direction: MoveDirection) -> io::Result<()> {
@@ -84,7 +82,11 @@ fn clear_player_position(stdout: &mut io::Stdout, position: &(u16, u16)) -> io::
 }
 
 fn can_move(x: u16, y: u16, game: &Game) -> bool {
-    !game.map.cells.contains_key(&(x, y))
+    match game.map.cells.get(&(x, y)) {
+        Some(CellType::Wall) => false,
+        Some(CellType::Empty) => true,
+        None => false,
+    }
 }
 
 pub fn clear_game(stdout: &mut io::Stdout) -> io::Result<()> {

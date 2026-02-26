@@ -2,6 +2,7 @@ use std::{collections::HashMap};
 
 pub enum CellType {
     Wall,
+    Empty,
 }
 
 pub struct Map {
@@ -24,6 +25,8 @@ pub struct Game {
     pub map: Map,
     pub player_position: (u16, u16),
     pub exit_position: (u16, u16),
+    pub size_x : u16,
+    pub size_y: u16,
 }
 
 impl Game {
@@ -32,6 +35,8 @@ impl Game {
             map: Map::new(),
             player_position: (0,0),
             exit_position: (0, 0),
+            size_x: 0,
+            size_y: 0,
         }
     }
 }
