@@ -39,7 +39,7 @@ Generates a random maze and lets you navigate through it in the terminal. Find t
 
 - **Rust** (edition 2024)
 - [`crossterm`](https://crates.io/crates/crossterm) — terminal rendering and keyboard input
-- [`rand`](https://crates.io/crates/rand) — random maze generation
+- [`rand`](https://crates.io/crates/rand) — random number generation
 
 ## Running
 
