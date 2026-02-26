@@ -6,14 +6,14 @@ use crossterm::{
     style::{self, Color, Stylize}, terminal::{Clear, ClearType},
 };
 
-pub fn draw_game(stdout: &mut io::Stdout, game: &Game) -> io::Result<()> {
-    for ((x, y), cell_type) in game.map.cells.iter() {
-
-        match cell_type {
-            CellType::Wall => draw_char(stdout, (*x, *y), '█', Color::White)?,
-            CellType::Empty => draw_char(stdout, (*x, *y), ' ', Color::Black)?,
+pub fn draw_game(stdout: &mut io::Stdout, game: &Game, redraw_cells: bool) -> io::Result<()> {
+    if redraw_cells {
+        for ((x, y), cell_type) in game.map.cells.iter() {
+            match cell_type {
+                CellType::Wall => draw_char(stdout, (*x, *y), '█', Color::White)?,
+                CellType::Empty => draw_char(stdout, (*x, *y), ' ', Color::Black)?,
+            }
         }
-
     }
 
     if game.player_position == game.exit_position {
@@ -63,7 +63,7 @@ pub fn move_player(stdout: &mut io::Stdout, game: &mut Game, direction: MoveDire
 
     game.player_position = new_position;
 
-    draw_game(stdout, game)?;
+    draw_game(stdout, game, false)?;
 
     Ok(())
 }

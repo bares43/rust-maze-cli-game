@@ -26,7 +26,7 @@ fn main() -> io::Result<()> {
     stdout.execute(cursor::Hide)?;
 
     stdout.execute(terminal::Clear(terminal::ClearType::All))?;
-    draw_game(&mut stdout, &game)?;
+    draw_game(&mut stdout, &game, true)?;
 
     loop {
         if let Event::Key(KeyEvent { code, .. }) = event::read()? {
@@ -47,6 +47,6 @@ fn main() -> io::Result<()> {
 
     terminal::disable_raw_mode()?;
     stdout.execute(cursor::Show)?;
-    
+
     Ok(())
 }
