@@ -6,9 +6,7 @@ use models::{Game};
 use game::{draw_game,generate_map};
 use std::{io::{self}};
 use crossterm::{
-    ExecutableCommand,
-    terminal,
-    event::{self, Event, KeyCode, KeyEvent},
+    ExecutableCommand, cursor, event::{self, Event, KeyCode, KeyEvent}, terminal
 };
 
 use crate::game::{clear_game, move_player};
@@ -25,6 +23,7 @@ fn main() -> io::Result<()> {
     generate_map(&mut game);
 
     terminal::enable_raw_mode()?;
+    stdout.execute(cursor::Hide)?;
 
     stdout.execute(terminal::Clear(terminal::ClearType::All))?;
     draw_game(&mut stdout, &game)?;
@@ -34,6 +33,7 @@ fn main() -> io::Result<()> {
             match code {
                 KeyCode::Char('q') => {
                     clear_game(&mut stdout)?;
+                    stdout.execute(cursor::Show)?;  
                     break
                 },
                 KeyCode::Left => move_player(&mut stdout, &mut game, models::MoveDirection::Left)?,
@@ -46,5 +46,7 @@ fn main() -> io::Result<()> {
     }
 
     terminal::disable_raw_mode()?;
+    stdout.execute(cursor::Show)?;
+    
     Ok(())
 }
