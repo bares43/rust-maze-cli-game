@@ -79,3 +79,62 @@ fn can_move(new: (u16, u16), game: &Game) -> bool {
         None => false,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn make_game() -> Game {
+        let mut game = Game::new();
+        game.size_x = 10;
+        game.size_y = 10;
+        game
+    }
+
+    // Boundary checks
+    #[test]
+    fn can_move_boundary_x_is_zero() {
+        let game = make_game();
+        assert_eq!(can_move((0, 5), &game), false);
+    }
+
+    #[test]
+    fn can_move_boundary_y_is_zero() {
+        let game = make_game();
+        assert_eq!(can_move((5, 0), &game), false);
+    }
+
+    #[test]
+    fn can_move_boundary_x_exceeds_size() {
+        let game = make_game();
+        assert_eq!(can_move((10, 5), &game), false);
+    }
+
+    #[test]
+    fn can_move_boundary_y_exceeds_size() {
+        let game = make_game();
+        assert_eq!(can_move((5, 10), &game), false);
+    }
+
+    // Cell type checks
+    #[test]
+    fn can_move_wall_cell_returns_true() {
+        let mut game = make_game();
+        game.map.add_cell(5, 5, CellType::Wall);
+        assert_eq!(can_move((5, 5), &game), true);
+    }
+
+    #[test]
+    fn can_move_empty_cell_returns_false() {
+        let mut game = make_game();
+        game.map.add_cell(5, 5, CellType::Empty);
+        assert_eq!(can_move((5, 5), &game), false);
+    }
+
+    // Missing cell check
+    #[test]
+    fn can_move_missing_cell_returns_false() {
+        let game = make_game();
+        assert_eq!(can_move((5, 5), &game), false);
+    }
+}
