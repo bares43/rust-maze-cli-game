@@ -92,5 +92,7 @@ fn can_move(x: u16, y: u16, game: &Game) -> bool {
 pub fn clear_game(stdout: &mut io::Stdout) -> io::Result<()> {
     stdout.queue(Clear(ClearType::All))?;
 
+    stdout.flush()?;
+
     Ok(())
 }
