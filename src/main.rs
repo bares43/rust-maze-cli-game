@@ -36,10 +36,10 @@ fn main() -> io::Result<()> {
                     stdout.execute(cursor::Show)?;  
                     break
                 },
-                KeyCode::Left => move_player(&mut stdout, &mut game, models::MoveDirection::Left)?,
-                KeyCode::Right => move_player(&mut stdout, &mut game, models::MoveDirection::Right)?,
-                KeyCode::Down => move_player(&mut stdout, &mut game, models::MoveDirection::Bottom)?,
-                KeyCode::Up => move_player(&mut stdout, &mut game, models::MoveDirection::Top)?,
+                KeyCode::Left | KeyCode::Char('a') => move_player(&mut stdout, &mut game, models::MoveDirection::Left)?,
+                KeyCode::Right | KeyCode::Char('d')  => move_player(&mut stdout, &mut game, models::MoveDirection::Right)?,
+                KeyCode::Down | KeyCode::Char('s')  => move_player(&mut stdout, &mut game, models::MoveDirection::Bottom)?,
+                KeyCode::Up | KeyCode::Char('w')  => move_player(&mut stdout, &mut game, models::MoveDirection::Top)?,
                 _ => {}
             }
         }
