@@ -23,6 +23,10 @@ pub fn draw_game(stdout: &mut io::Stdout, game: &Game, redraw_cells: bool) -> io
         draw_char(stdout, game.exit_position, 'E', Color::White)?;
     }
 
+    let status_bar = format!("Controls: WASD / arrows to move, Q to quit | moves: {}", game.total_moves);
+
+    draw_line(stdout, game.size_y + 2, status_bar, Color::White)?;
+
     stdout.flush()?;
     Ok(())
 }
@@ -34,6 +38,20 @@ fn draw_char(stdout: &mut io::Stdout, position: (u16, u16), char: char, color: C
             style::StyledContent::new(
                 style::ContentStyle::new().with(color),
                 char,
+            ),
+        ))?;
+
+    Ok(())
+}
+
+fn draw_line(stdout: &mut io::Stdout, line: u16, content: String, color: Color) -> io::Result<()> {
+    stdout
+        .queue(cursor::MoveTo(0, line))?
+        .queue(Clear(ClearType::CurrentLine))?
+        .queue(style::PrintStyledContent(
+            style::StyledContent::new(
+                style::ContentStyle::new().with(color),
+                content,
             ),
         ))?;
 
@@ -58,6 +76,8 @@ pub fn move_player(stdout: &mut io::Stdout, game: &mut Game, direction: MoveDire
     if !can_move(new_position.0, new_position.1, game) {
         return Ok(())
     }
+
+    game.total_moves += 1;
 
     clear_player_position(stdout, &game.player_position)?;
 

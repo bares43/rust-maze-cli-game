@@ -27,6 +27,7 @@ pub struct Game {
     pub exit_position: (u16, u16),
     pub size_x : u16,
     pub size_y: u16,
+    pub total_moves: u32,
 }
 
 impl Game {
@@ -37,6 +38,7 @@ impl Game {
             exit_position: (0, 0),
             size_x: 0,
             size_y: 0,
+            total_moves: 0,
         }
     }
 }
