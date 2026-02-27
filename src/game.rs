@@ -6,6 +6,19 @@ use crossterm::{
     style::{self, Color, Stylize}, terminal::{Clear, ClearType},
 };
 
+pub fn create_game() -> Game {
+    
+    let mut game = Game::new();
+    game.size_x = 74;
+    game.size_y = 24;
+    game.player_position = (1, 1);
+    game.exit_position = (game.size_x - 1, game.size_y - 1);
+
+    generate_map(&mut game);
+
+    return game;
+}
+
 pub fn draw_game(stdout: &mut io::Stdout, game: &Game, redraw_cells: bool) -> io::Result<()> {
     if redraw_cells {
         for ((x, y), cell_type) in game.map.cells.iter() {
@@ -23,7 +36,7 @@ pub fn draw_game(stdout: &mut io::Stdout, game: &Game, redraw_cells: bool) -> io
         draw_char(stdout, game.exit_position, 'E', Color::White)?;
     }
 
-    let status_bar = format!("Controls: WASD / arrows to move, Q to quit | moves: {}", game.total_moves);
+    let status_bar = format!("Controls: WASD / arrows to move, Q to quit, N to create new game | moves: {}", game.total_moves);
 
     draw_line(stdout, game.size_y + 2, status_bar, Color::White)?;
 
