@@ -6,7 +6,7 @@ use models::{Game};
 use game::{draw_game,generate_map};
 use std::{io::{self}};
 use crossterm::{
-    ExecutableCommand, cursor, event::{self, Event, KeyCode, KeyEvent}, terminal
+    ExecutableCommand, cursor, event::{self, Event, KeyCode, KeyEvent, KeyEventKind}, terminal
 };
 
 use crate::game::{clear_game, move_player};
@@ -29,7 +29,7 @@ fn main() -> io::Result<()> {
     draw_game(&mut stdout, &game, true)?;
 
     loop {
-        if let Event::Key(KeyEvent { code, .. }) = event::read()? {
+        if let Event::Key(KeyEvent { code, kind: KeyEventKind::Press, .. }) = event::read()? {
             match code {
                 KeyCode::Char('q') => {
                     clear_game(&mut stdout)?;
