@@ -2,19 +2,21 @@ mod models;
 mod game;
 mod generator;
 
-use models::{Game};
-use game::{draw_game,generate_map};
+use game::{draw_game};
 use std::{io::{self}};
 use crossterm::{
     ExecutableCommand, cursor, event::{self, Event, KeyCode, KeyEvent, KeyEventKind}, terminal
 };
 
-use crate::game::{clear_game, create_game, move_player};
+use crate::game::{clear_game, create_game, move_player, prompt_for_new_game};
+
+pub const GAME_DEFAULT_SIZE_X: u16 = 74;
+pub const GAME_DEFAULT_SIZE_Y: u16 = 24;
 
 fn main() -> io::Result<()> {
     let mut stdout = io::stdout();
 
-    let mut game = create_game();
+    let mut game = create_game(GAME_DEFAULT_SIZE_X, GAME_DEFAULT_SIZE_Y);
 
     terminal::enable_raw_mode()?;
     stdout.execute(cursor::Hide)?;
@@ -31,9 +33,7 @@ fn main() -> io::Result<()> {
                     break
                 },
                 KeyCode::Char('n') => {
-                    clear_game(&mut stdout)?;
-                    game = create_game();
-                    draw_game(&mut stdout, &game, true)?;
+                    prompt_for_new_game(&mut stdout, &mut game)?;
                 },
                 KeyCode::Left | KeyCode::Char('a') => move_player(&mut stdout, &mut game, models::MoveDirection::Left)?,
                 KeyCode::Right | KeyCode::Char('d')  => move_player(&mut stdout, &mut game, models::MoveDirection::Right)?,
