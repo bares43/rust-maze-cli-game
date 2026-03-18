@@ -1,32 +1,32 @@
-use crate::models::{CellType, Game,};
+use crate::models::{CellType, Game, Point,};
 use rand::{seq::SliceRandom};
 
 pub fn init_map(game: &mut Game) {
     for x in 0..=game.size_x {
         for y in 0..=game.size_y {
-            game.map.add_cell(x, y, CellType::Wall);
+            game.map.add_cell(Point::new(x, y), CellType::Wall);
         }
     }
 }
 
 pub fn make_paths(game: &mut Game) {
-    let mut stack: Vec<(u16, u16)> = Vec::new();
+    let mut stack: Vec<Point> = Vec::new();
 
     let mut current_position = game.player_position.clone();
 
     stack.push(current_position);
 
-    game.map.cells.insert((current_position.0, current_position.1), CellType::Empty);
+    game.map.cells.insert(current_position, CellType::Empty);
 
     let mut rng = rand::rng();
     
     while !stack.is_empty() {
 
         let directions = vec![(0, -2), (0, 2), (-2, 0), (2, 0)];
-        let mut candidate_cells: Vec<(u16, u16)> = Vec::new();
+        let mut candidate_cells: Vec<Point> = Vec::new();
 
         for dir in directions.iter() {
-            let new_cell = (current_position.0.saturating_add_signed(dir.0), current_position.1.saturating_add_signed(dir.1));
+            let new_cell = Point::new(current_position.x.saturating_add_signed(dir.0), current_position.y.saturating_add_signed(dir.1));
 
             if can_move(new_cell, game) {
                 candidate_cells.push(new_cell);
@@ -51,12 +51,12 @@ pub fn make_paths(game: &mut Game) {
 
         let chosen_cell = candidate_cells[0];
     
-        let cell_on_way_x = (current_position.0 as i32 + (chosen_cell.0 as i32 - current_position.0 as i32).signum()) as u16;
-        let cell_on_way_y = (current_position.1 as i32 + (chosen_cell.1 as i32 - current_position.1 as i32).signum()) as u16;
+        let cell_on_way_x = (current_position.x as i32 + (chosen_cell.x as i32 - current_position.x as i32).signum()) as u16;
+        let cell_on_way_y = (current_position.y as i32 + (chosen_cell.y as i32 - current_position.y as i32).signum()) as u16;
 
-        game.map.cells.insert((cell_on_way_x, cell_on_way_y), CellType::Empty);
+        game.map.cells.insert(Point::new(cell_on_way_x, cell_on_way_y), CellType::Empty);
 
-        game.map.cells.insert((chosen_cell.0, chosen_cell.1), CellType::Empty);
+        game.map.cells.insert(Point::new(chosen_cell.x, chosen_cell.y), CellType::Empty);
 
         stack.push(chosen_cell);
         current_position = chosen_cell;
@@ -64,16 +64,16 @@ pub fn make_paths(game: &mut Game) {
     }
 }
 
-fn can_move(new: (u16, u16), game: &Game) -> bool {
-    if new.0 == 0 || new.1 == 0 {
+fn can_move(new: Point, game: &Game) -> bool {
+    if new.x == 0 || new.y == 0 {
         return false;
     }
 
-    if new.0 >= game.size_x || new.1 >= game.size_y {
+    if new.x >= game.size_x || new.y >= game.size_y {
         return false;
     }
 
-    match game.map.cells.get(&(new.0, new.1)) {
+    match game.map.cells.get(&Point::new(new.x, new.y)) {
         Some(CellType::Wall) => true,
         Some(CellType::Empty) => false,
         None => false,
@@ -95,46 +95,46 @@ mod tests {
     #[test]
     fn can_move_boundary_x_is_zero() {
         let game = make_game();
-        assert_eq!(can_move((0, 5), &game), false);
+        assert_eq!(can_move(Point::new(0, 5), &game), false);
     }
 
     #[test]
     fn can_move_boundary_y_is_zero() {
         let game = make_game();
-        assert_eq!(can_move((5, 0), &game), false);
+        assert_eq!(can_move(Point::new(5, 0), &game), false);
     }
 
     #[test]
     fn can_move_boundary_x_exceeds_size() {
         let game = make_game();
-        assert_eq!(can_move((10, 5), &game), false);
+        assert_eq!(can_move(Point::new(10, 5), &game), false);
     }
 
     #[test]
     fn can_move_boundary_y_exceeds_size() {
         let game = make_game();
-        assert_eq!(can_move((5, 10), &game), false);
+        assert_eq!(can_move(Point::new(5, 10), &game), false);
     }
 
     // Cell type checks
     #[test]
     fn can_move_wall_cell_returns_true() {
         let mut game = make_game();
-        game.map.add_cell(5, 5, CellType::Wall);
-        assert_eq!(can_move((5, 5), &game), true);
+        game.map.add_cell(Point::new(5, 5), CellType::Wall);
+        assert_eq!(can_move(Point::new(5, 5), &game), true);
     }
 
     #[test]
     fn can_move_empty_cell_returns_false() {
         let mut game = make_game();
-        game.map.add_cell(5, 5, CellType::Empty);
-        assert_eq!(can_move((5, 5), &game), false);
+        game.map.add_cell(Point::new(5, 5), CellType::Empty);
+        assert_eq!(can_move(Point::new(5, 5), &game), false);
     }
 
     // Missing cell check
     #[test]
     fn can_move_missing_cell_returns_false() {
         let game = make_game();
-        assert_eq!(can_move((5, 5), &game), false);
+        assert_eq!(can_move(Point::new(5, 5), &game), false);
     }
 }

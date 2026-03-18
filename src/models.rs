@@ -1,12 +1,31 @@
 use std::{collections::HashMap};
 
+#[derive(Eq, Hash, PartialEq, Clone, Copy)]
+pub struct Point {
+    pub x: u16,
+    pub y: u16,
+}
+
+impl Point {
+    pub fn new(x: u16, y: u16) -> Self {
+        Self {
+            x: x,
+            y: y,
+        }
+    }
+
+    pub fn zero() -> Self {
+        Self::new(0, 0)
+    }
+}
+
 pub enum CellType {
     Wall,
     Empty,
 }
 
 pub struct Map {
-    pub cells: HashMap<(u16, u16), CellType>,
+    pub cells: HashMap<Point, CellType>,
 }
 
 impl Map {
@@ -16,15 +35,15 @@ impl Map {
         }
     }
 
-    pub fn add_cell(&mut self, x: u16, y: u16, cell: CellType) {
-        self.cells.insert((x, y), cell);
+    pub fn add_cell(&mut self, point: Point, cell: CellType) {
+        self.cells.insert(point, cell);
     }
 }
 
 pub struct Game {
     pub map: Map,
-    pub player_position: (u16, u16),
-    pub exit_position: (u16, u16),
+    pub player_position: Point,
+    pub exit_position: Point,
     pub size_x : u16,
     pub size_y: u16,
     pub total_moves: u32,
@@ -34,8 +53,8 @@ impl Game {
     pub fn new() -> Self {
         Self {
             map: Map::new(),
-            player_position: (0,0),
-            exit_position: (0, 0),
+            player_position: Point::zero(),
+            exit_position: Point::zero(),
             size_x: 0,
             size_y: 0,
             total_moves: 0,

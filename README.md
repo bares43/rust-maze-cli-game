@@ -31,7 +31,7 @@ Generates a random maze and lets you navigate through it in the terminal. Find t
 ## How it works
 
 - The maze is procedurally generated using a **recursive backtracker** (depth-first search with a stack)
-- The map is stored as a `HashMap<(u16, u16), CellType>` — each cell is either a `Wall` or `Empty`
+- The map is stored as a `HashMap<Point, CellType>` — each cell is either a `Wall` or `Empty`
 - Rendering is done with [crossterm](https://github.com/crossterm-rs/crossterm) for cross-platform raw terminal control
 - Player movement checks the map before updating position — walls block movement
 
