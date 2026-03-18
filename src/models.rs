@@ -8,10 +8,7 @@ pub struct Point {
 
 impl Point {
     pub fn new(x: u16, y: u16) -> Self {
-        Self {
-            x: x,
-            y: y,
-        }
+        Self { x, y }
     }
 
     pub fn zero() -> Self {

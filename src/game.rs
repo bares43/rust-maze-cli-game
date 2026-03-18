@@ -14,7 +14,7 @@ pub fn create_game(width: u16, height: u16) -> Game {
 
     generate_map(&mut game);
 
-    return game;
+    game
 }
 
 pub fn draw_game(stdout: &mut io::Stdout, game: &Game, redraw_cells: bool) -> io::Result<()> {
@@ -83,7 +83,7 @@ pub fn generate_map(game: &mut Game) {
 }
 
 pub fn move_player(stdout: &mut io::Stdout, game: &mut Game, direction: MoveDirection) -> io::Result<()> {
-    let mut new_position = game.player_position.clone();
+    let mut new_position = game.player_position;
     
     match direction {
         MoveDirection::Left => new_position.x -= 1,

@@ -12,7 +12,7 @@ pub fn init_map(game: &mut Game) {
 pub fn make_paths(game: &mut Game) {
     let mut stack: Vec<Point> = Vec::new();
 
-    let mut current_position = game.player_position.clone();
+    let mut current_position = game.player_position;
 
     stack.push(current_position);
 
@@ -20,9 +20,10 @@ pub fn make_paths(game: &mut Game) {
 
     let mut rng = rand::rng();
     
+    let directions = vec![(0, -2), (0, 2), (-2, 0), (2, 0)];
+
     while !stack.is_empty() {
 
-        let directions = vec![(0, -2), (0, 2), (-2, 0), (2, 0)];
         let mut candidate_cells: Vec<Point> = Vec::new();
 
         for dir in directions.iter() {
